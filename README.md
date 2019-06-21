@@ -1,2 +1,3 @@
-# mammoth
-Mammoth - Lightweight easy to use PHP framework
+# Mammoth PHP framework
+
+Project is still in construction
