@@ -1,0 +1,17 @@
+# Jetbrains IDE's Files
+.idea/
+
+# NPM
+node_modules/
+
+# Composer
+vendor/
+
+# Temp and log directories
+temp/
+log/
+
+# Temp and log Files (not only in temp and log directories)
+*~
+*.tmp
+*.log
