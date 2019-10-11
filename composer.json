@@ -1,0 +1,22 @@
+{
+    "name": "ceskydj/mammoth",
+    "description": "Mammoth - Lightweight easy to use PHP framework",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michal ŠMAHEL",
+            "email": "admin@ceskydj.cz"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "Mammoth\\": "src/"
+        }
+    }
+}
