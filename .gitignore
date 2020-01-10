@@ -7,14 +7,14 @@ node_modules/
 # Composer
 vendor/
 
-# Temp and log directories
+# temp and log directories
 temp/
 log/
 
-# Temp and log Files (not only in temp and log directories)
+# temp and log Files (not only in temp and log directories)
 *~
 *.tmp
 *.log
 
-# Config files
+# config files
 config.local.ini

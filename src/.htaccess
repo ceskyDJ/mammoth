@@ -1,0 +1,3 @@
+# Only for system, all public access is denied automatically
+Order deny,allow
+Deny from all

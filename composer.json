@@ -9,11 +9,19 @@
             "email": "admin@ceskydj.cz"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
-        "php": ">=7.4"
+        "php": ">=7.4",
+        "ext-mbstring": "*",
+        "tracy/tracy": "^2.6",
+        "jandrabek/tracy-gitversion-panel": "^2.0",
+        "latte/latte": "^3.0@dev",
+        "ext-pdo": "*",
+        "nette/database": "^3.0"
     },
-    "require-dev": {},
+    "require-dev": {
+        "rector/rector": "^0.6.2"
+    },
     "autoload": {
         "psr-4": {
             "Mammoth\\": "src/"

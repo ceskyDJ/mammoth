@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+
+<html lang="cs">
+<head>
+    <base href="{$server->getProtocol()}://{$server->getServerVar("SERVER_NAME")}/" />
+
+    <meta charset="UTF-8" />
+
+    <title>{$title}</title>
+
+    <meta name="viewport" content="width=devide-width, height=device-height, initial-scale=1" />
+
+    <meta name="description" content="{$description}}" />
+    <meta name="keywords" content="{$keywords}" />
+
+    <meta name="author" content="Michal ŠMAHEL (ceskyDJ)" />
+</head>
+
+
+<body>
+<header>
+    <h1>Mammoth framework</h1>
+</header>
+
+<main>
+    {include $contentView}
+</main>
+</body>
+</html>
