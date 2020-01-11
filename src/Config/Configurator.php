@@ -13,6 +13,7 @@ use Mammoth\Common\DIClass;
 use Mammoth\Database\DB;
 use Mammoth\DI\DIContainer;
 use Mammoth\Exceptions\ApplicationNotUseComponentsException;
+use Mammoth\Exceptions\ConfigFileNotFoundException;
 use Mammoth\Exceptions\LoadNonInjectableClassException;
 use Mammoth\Exceptions\NoConfigFileGivenException;
 use Mammoth\Exceptions\NonExistingFileException;
@@ -74,9 +75,8 @@ class Configurator
      * @param string[] $configFiles Absolute paths to config files
      *
      * @throws \Mammoth\Exceptions\NoConfigFileGivenException No config file specified
-     * @throws \Mammoth\Exceptions\NonExistingFileException Invalid file address
-     * @throws \Mammoth\Exceptions\NotSetAllDataInLocalConfigException Missing config in local config
-     *     file
+     * @throws \Mammoth\Exceptions\ConfigFileNotFoundException Invalid configuration file address
+     * @throws \Mammoth\Exceptions\NotSetAllDataInLocalConfigException Missing config in local config file
      */
     public function __construct(string $appSrcRootDir, ...$configFiles)
     {
@@ -92,7 +92,7 @@ class Configurator
      *
      * @return array Configs
      * @throws \Mammoth\Exceptions\NoConfigFileGivenException No config file specified
-     * @throws \Mammoth\Exceptions\NonExistingFileException Invalid file address
+     * @throws \Mammoth\Exceptions\ConfigFileNotFoundException Invalid file address
      * @throws \Mammoth\Exceptions\NotSetAllDataInLocalConfigException Missing config in local config
      *     file
      */
@@ -109,7 +109,7 @@ class Configurator
         foreach ($configFiles as $file) {
             // config file doesn't exists
             if (!file_exists($file)) {
-                throw new NonExistingFileException("Entered config file's address is invalid");
+                throw new ConfigFileNotFoundException("Entered config file's address is invalid");
             }
 
             $actualFile = parse_ini_file($file, true, INI_SCANNER_TYPED);

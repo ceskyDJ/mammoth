@@ -11,11 +11,11 @@ namespace Mammoth\Exceptions;
 use RuntimeException;
 
 /**
- * Exception for not configured config file
+ * Exception for providing bad address of configuration file
  *
  * @author Michal Šmahel (ceskyDJ) <admin@ceskydj.cz>
  * @package Mammoth\Exceptions
  */
-class NoConfigFileGivenException extends RuntimeException
+class ConfigFileNotFoundException extends RuntimeException
 {
 }

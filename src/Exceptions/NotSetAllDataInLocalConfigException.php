@@ -8,7 +8,7 @@ declare(strict_types = 1);
 
 namespace Mammoth\Exceptions;
 
-use Exception;
+use RuntimeException;
 
 /**
  * Exception for missing override default values in local config file
@@ -16,6 +16,6 @@ use Exception;
  * @author Michal Šmahel (ceskyDJ) <admin@ceskydj.cz>
  * @package Mammoth\Exceptions
  */
-class NotSetAllDataInLocalConfigException extends Exception
+class NotSetAllDataInLocalConfigException extends RuntimeException
 {
 }
