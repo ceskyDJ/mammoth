@@ -143,6 +143,7 @@ class Configurator
      * Creates a DI container and add base functions to it
      *
      * @return \Mammoth\DI\DIContainer DI container
+     * @noinspection PhpDocMissingThrowsInspection Classes are entered manually
      */
     public function createContainer(): DIContainer
     {
@@ -157,19 +158,19 @@ class Configurator
         // Factories for constructing HTTP data objects
         /**
          * @var $cookieFactory CookieFactory
+         * @noinspection PhpUnhandledExceptionInspection Class typed manually
          */
         $cookieFactory = $container->getInstance(CookieFactory::class);
         /**
          * @var $serverFactory ServerFactory
+         * @noinspection PhpUnhandledExceptionInspection Class typed manually
          */
         $serverFactory = $container->getInstance(ServerFactory::class);
         /**
          * @var $sessionFactory SessionFactory
+         * @noinspection PhpUnhandledExceptionInspection Class typed manually
          */
         $sessionFactory = $container->getInstance(SessionFactory::class);
-
-        // Tracy
-        $this->configureTracy($container);
 
         return $container->addInstance($this)
             ->addInstance($container)
@@ -192,23 +193,25 @@ class Configurator
      * Configures Tracy bar and paths
      *
      * @param \Mammoth\DI\DIContainer $container DI container
+     * @param string|null $developerEmail Developer's email address for sending important error information
+     *
+     * @noinspection PhpDocMissingThrowsInspection Classes entered manually
      */
-    public function configureTracy(DIContainer $container): void
+    public function enableTracy(DIContainer $container, ?string $developerEmail = null): void
     {
-        try {
-            Debugger::getBar()
-                ->addPanel(new GitVersionPanel());
+        Debugger::enable(Debugger::DETECT, null, $developerEmail);
 
-            /**
-             * @var $dbConnection DB
-             */
-            $dbConnection = $container->getInstance(DB::class);
+        Debugger::getBar()
+            ->addPanel(new GitVersionPanel());
 
-            Debugger::getBar()
-                ->addPanel(new ConnectionPanel($dbConnection));
-        } catch (LoadNonInjectableClassException|ReflectionException $e) {
-            // Cannot occur, because it's typed manually
-        }
+        /**
+         * @var $dbConnection DB
+         * @noinspection PhpUnhandledExceptionInspection Class typed manually
+         */
+        $dbConnection = $container->getInstance(DB::class);
+
+        Debugger::getBar()
+            ->addPanel(new ConnectionPanel($dbConnection));
 
         Debugger::$logDirectory = $this->getLogDir();
         Debugger::$productionMode = !$this->isActualServerDevelopment();
