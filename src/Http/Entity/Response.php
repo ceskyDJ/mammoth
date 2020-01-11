@@ -8,6 +8,7 @@ declare(strict_types = 1);
 
 namespace Mammoth\Http\Entity;
 
+use Mammoth\Exceptions\NoContentViewSetException;
 use Mammoth\Exceptions\NonExistingContentTypeException;
 use Mammoth\Templates\Abstraction\IMessageManager;
 use Mammoth\Templates\MessageManager;
@@ -85,6 +86,7 @@ final class Response
         $this->setKeywords("");
 
         $this->setLayoutView("#layout");
+        $this->setContentView("");
     }
 
     /**
@@ -213,6 +215,9 @@ final class Response
             ->setDataVar("server", $this->server);
 
         // Views for loading
+        if ($this->getContentView() === "") {
+            throw new NoContentViewSetException("You haven't set any content view in controller");
+        }
         $this->setDataVar("contentView", $this->getContentView().".latte");
 
         // Messages for user
