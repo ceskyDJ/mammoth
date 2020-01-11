@@ -21,6 +21,7 @@ use Mammoth\Exceptions\NotSetAllDataInLocalConfigException;
 use Mammoth\Http\Factory\CookieFactory;
 use Mammoth\Http\Factory\ServerFactory;
 use Mammoth\Http\Factory\SessionFactory;
+use Mammoth\Loading\Abstraction\ILoader;
 use Nette\Bridges\DatabaseTracy\ConnectionPanel;
 use ReflectionException;
 use Tracy\Debugger;
@@ -215,6 +216,24 @@ class Configurator
 
         Debugger::$logDirectory = $this->getLogDir();
         Debugger::$productionMode = !$this->isActualServerDevelopment();
+    }
+
+    /**
+     * Enables application class auto-loader
+     *
+     * @param \Mammoth\DI\DIContainer $container DI container
+     *
+     * @noinspection PhpDocMissingThrowsInspection Classes entered manually
+     */
+    public function enableLoader(DIContainer $container): void
+    {
+        /**
+         * @var $loader \Mammoth\Loading\Abstraction\ILoader
+         * @noinspection PhpUnhandledExceptionInspection
+         */
+        $loader = $container->getInstance(ILoader::class);
+
+        $loader->startClassAutoLoading();
     }
 
     /**
