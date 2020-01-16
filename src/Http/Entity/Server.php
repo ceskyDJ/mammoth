@@ -129,4 +129,18 @@ final class Server
     {
         return $this->serverData['REQUEST_URI'];
     }
+
+    /**
+     * Returns base href for <base /> tag
+     *
+     * @return string Href attribute content of <base> tag
+     * @noinspection PhpDocMissingThrowsInspection It cannot occur (typed manually)
+     */
+    public function getBaseHref(): string
+    {
+        /**
+         * @noinspection PhpUnhandledExceptionInspection It's OK - typed manually
+         */
+        return "{$this->getProtocol()}://{$this->getServerVar("SERVER_NAME")}/";
+    }
 }
