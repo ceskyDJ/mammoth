@@ -10,6 +10,7 @@ namespace Mammoth\Base;
 
 use Mammoth\Common\DIClass;
 use Mammoth\Config\Configurator;
+use Mammoth\Connect\Tracy\Factory\UrlPanelFactory;
 use Mammoth\Connect\Tracy\UserPanel;
 use Mammoth\Controller\Common\Controller;
 use Mammoth\DI\DIContainer;
@@ -103,14 +104,6 @@ class SystemController
         // Auto set up user
         $this->userManager->logInUserAutomatically();
 
-        // Add user panel to Tracy
-        /**
-         * @var $userPanel UserPanel
-         * @noinspection PhpUnhandledExceptionInspection Class typed manually
-         */
-        $userPanel = $this->container->getInstance(UserPanel::class);
-        $this->configurator->addUserPanelToTracy($userPanel);
-
         $parsedUrl = $request->getParsedUrl();
 
         // If application uses component system -> component
@@ -172,6 +165,9 @@ class SystemController
 
         // Add some template vars generated in framework
         $this->addTemplateVarsToResponse($response);
+
+        // Add Tracy debugger bar panels depends on processed data
+        $this->addTracyPanels($request, $controller);
 
         // Write templates
         $this->printer->writeContent($response);
@@ -263,5 +259,38 @@ class SystemController
         } else {
             $response->setDataVar("antiCache", "t=".date("d-m-Y-H.m:s"));
         }
+    }
+
+    /**
+     * Adds panels to Tracy debugger bar
+     * It has to be called at the end of the startSystem() method,
+     * because these panels have some dependencies that is fully formed only at this point
+     *
+     * @param \Mammoth\Http\Entity\Request $request Request object for getting some data
+     * @param \Mammoth\Controller\Common\Controller $controller Controller for getting some data
+     *
+     * @noinspection PhpDocMissingThrowsInspection Class is typed manually
+     */
+    private function addTracyPanels(Request $request, Controller $controller): void
+    {
+        // URL panel
+        /**
+         * @var $urlPanelFactory UrlPanelFactory
+         * @noinspection PhpUnhandledExceptionInspection Class typed manually
+         */
+        $urlPanelFactory = $this->container->getInstance(UrlPanelFactory::class);
+        $urlPanel = $urlPanelFactory->create($request);
+        $urlPanel->setController($controller);
+
+        $this->configurator->addUrlPanelToTracy($urlPanel);
+
+        // User panel
+        /**
+         * @var $userPanel UserPanel
+         * @noinspection PhpUnhandledExceptionInspection Class typed manually
+         */
+        $userPanel = $this->container->getInstance(UserPanel::class);
+
+        $this->configurator->addUserPanelToTracy($userPanel);
     }
 }

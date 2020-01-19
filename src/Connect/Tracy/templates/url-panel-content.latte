@@ -1,0 +1,39 @@
+<h1>URL processing</h1>
+
+<div class="tracy-inner">
+    <div class="tracy-inner-container">
+        <p>
+            <strong>URL: </strong><span>{$url}</span><br />
+            <strong>Last: </strong><span>{$previousUrl}</span>
+        </p>
+
+        <table>
+            <tbody>
+            <tr>
+                <th>Language</th>
+                <td>{$parsedUrl->getLanguage()}</td>
+            </tr>
+            <tr>
+                <th>Component</th>
+                <td>{$parsedUrl->getComponent()}</td>
+            </tr>
+            <tr>
+                <th>Controller</th>
+                <td>{$parsedUrl->getController()}</td>
+            </tr>
+            <tr>
+                <th>Action</th>
+                <td>{$parsedUrl->getAction()}</td>
+            </tr>
+            <tr>
+                <th>Data</th>
+                <td>{$parsedData}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p>
+            <a n:if="$controller !== null" href="editor://open/?file={$controllerPath}">{$controller}</a>
+        </p>
+    </div>
+</div>

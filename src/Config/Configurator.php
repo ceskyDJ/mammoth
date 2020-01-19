@@ -10,6 +10,8 @@ namespace Mammoth\Config;
 
 use JanDrabek\Tracy\GitVersionPanel;
 use Mammoth\Common\DIClass;
+use Mammoth\Connect\Tracy\Factory\UrlPanelFactory;
+use Mammoth\Connect\Tracy\UrlPanel;
 use Mammoth\Connect\Tracy\UserPanel;
 use Mammoth\Database\DB;
 use Mammoth\DI\DIContainer;
@@ -21,6 +23,7 @@ use Mammoth\Http\Factory\CookieFactory;
 use Mammoth\Http\Factory\ServerFactory;
 use Mammoth\Http\Factory\SessionFactory;
 use Mammoth\Loading\Abstraction\ILoader;
+use Mammoth\Security\Entity\User;
 use Nette\Bridges\DatabaseTracy\ConnectionPanel;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
@@ -196,8 +199,7 @@ class Configurator
      * @param string|null $developerEmail Developer's email address for sending important error information
      * @param \Tracy\IBarPanel[] $ownPanels Panels to Tracy added by application
      *
-     * @throws \Mammoth\Exceptions\LoadNonInjectableClassException
-     * @throws \ReflectionException
+     * @noinspection PhpDocMissingThrowsInspection Class names typed manually
      */
     public function enableTracy(DIContainer $container, ?string $developerEmail = null, array $ownPanels = []): void
     {
@@ -212,8 +214,22 @@ class Configurator
          * @noinspection PhpUnhandledExceptionInspection Class typed manually
          */
         $dbConnection = $container->getInstance(DB::class);
+        Debugger::getBar()->addPanel(new ConnectionPanel($dbConnection), "db");
 
-        Debugger::getBar()->addPanel(new ConnectionPanel($dbConnection));
+        /**
+         * @var $urlPanelFactory UrlPanelFactory
+         * @noinspection PhpUnhandledExceptionInspection Class typed manually
+         */
+        $urlPanelFactory = $container->getInstance(UrlPanelFactory::class);
+        $urlPanel = $urlPanelFactory->create(null);
+        $this->addUrlPanelToTracy($urlPanel);
+
+        /**
+         * @var $userPanel UserPanel
+         * @noinspection PhpUnhandledExceptionInspection
+         */
+        $userPanel = $container->getInstance(UserPanel::class);
+        $this->addUserPanelToTracy($userPanel);
 
         // Application panels
         foreach ($ownPanels as $panel) {
@@ -233,7 +249,17 @@ class Configurator
      */
     public function addUserPanelToTracy(UserPanel $userPanel): void
     {
-        Debugger::getBar()->addPanel($userPanel);
+        Debugger::getBar()->addPanel($userPanel, "user");
+    }
+
+    /**
+     * Adds URL panel to Tracy debugger bar
+     *
+     * @param \Mammoth\Connect\Tracy\UrlPanel $urlPanel URL panel object
+     */
+    public function addUrlPanelToTracy(UrlPanel $urlPanel): void
+    {
+        Debugger::getBar()->addPanel($urlPanel, "url");
     }
 
     /**

@@ -54,6 +54,10 @@ class UserPanel implements IBarPanel
      */
     public function getPanel()
     {
+        if ($this->userManager->getUser() === null) {
+            return null;
+        }
+
         $user = $this->userManager->getUser();
         $rank = $user->getRank();
 
