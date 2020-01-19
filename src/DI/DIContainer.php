@@ -95,16 +95,23 @@ class DIContainer
         // second: Vendor\Namespace\Class (without \ at first position)
         $classWithNamespace = ltrim($classWithNamespace, "\\");
 
+        // Save original class name (fully qualified, of course) from parameter with only cosmetic edits
+        // This is because instead of interfaces are injected implementation classes and $classWithNamespace
+        // is changed to implementation class name. This is fine for creating its instance
+        // but not for storing it (system is searching for interface name not implement class one - this is
+        // a task of this DI container)
+        $originalClassWithNamespace = $classWithNamespace;
+
         // Instance has been created yet
-        if (array_key_exists($classWithNamespace, $this->loadedInstances)
-            && $this->loadedInstances[$classWithNamespace] != null) {
-            return $this->loadedInstances[$classWithNamespace];
+        if (array_key_exists($originalClassWithNamespace, $this->loadedInstances)
+            && $this->loadedInstances[$originalClassWithNamespace] != null) {
+            return $this->loadedInstances[$originalClassWithNamespace];
         }
 
         // Instance cannot be created
         $reflection = new SmartReflectionClass($classWithNamespace, $this->fileHelper, $this->arrayHelper);
         if ($reflection->isInstanceOf(NonInjectable::class) && !$reflection->isInstanceOf(SpecialInjectable::class)) {
-            throw new LoadNonInjectableClassException("Class {$classWithNamespace} cannot be auto-loaded");
+            throw new LoadNonInjectableClassException("Class {$classWithNamespace} cannot be auto-injected");
         }
 
         // Replace interface for implement class (if needed)
@@ -129,7 +136,7 @@ class DIContainer
             $instance->inject($this);
         }
 
-        return $this->loadedInstances[$classWithNamespace] = $instance;
+        return $this->loadedInstances[$originalClassWithNamespace] = $instance;
     }
 
     /**
