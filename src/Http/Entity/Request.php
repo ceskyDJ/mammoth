@@ -117,7 +117,7 @@ final class Request
         $penultimateUrlKey = count($this->session->getSession()['url-history']) - 2;
 
         if ($penultimateUrlKey >= 0) {
-            return $this->session->getSession()['url-history'][$penultimateUrlKey];
+            return $this->session->getUrlHistory()[$penultimateUrlKey];
         } else {
             return null;
         }

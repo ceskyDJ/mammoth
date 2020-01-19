@@ -51,7 +51,7 @@ final class Session
      *
      * @param string $key Key
      *
-     * @return string|string[] Values saved with the key
+     * @return mixed|array Values saved with the key
      * @throws \Mammoth\Exceptions\NonExistingKeyException Non existing key in SESSION
      */
     public function getSessionItemByKey(string $key)
@@ -78,9 +78,9 @@ final class Session
      * Sets value to the SESSION key
      *
      * @param string $key Key
-     * @param string $value New value for the key
+     * @param mixed $value New value for the key
      */
-    public function setSessionItem(string $key, string $value): void
+    public function setSessionItem(string $key, $value): void
     {
         $this->session[$key] = $value;
     }
