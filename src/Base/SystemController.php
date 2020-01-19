@@ -10,6 +10,7 @@ namespace Mammoth\Base;
 
 use Mammoth\Common\DIClass;
 use Mammoth\Config\Configurator;
+use Mammoth\Connect\Tracy\UserPanel;
 use Mammoth\Controller\Common\Controller;
 use Mammoth\DI\DIContainer;
 use Mammoth\Exceptions\InsufficientPermissionsException;
@@ -99,9 +100,18 @@ class SystemController
      */
     public function startSystem(Request $request): void
     {
-        $parsedUrl = $request->getParsedUrl();
+        // Auto set up user
+        $this->userManager->logInUserAutomatically();
 
-        //        bdump($parsedUrl);
+        // Add user panel to Tracy
+        /**
+         * @var $userPanel UserPanel
+         * @noinspection PhpUnhandledExceptionInspection Class typed manually
+         */
+        $userPanel = $this->container->getInstance(UserPanel::class);
+        $this->configurator->addUserPanelToTracy($userPanel);
+
+        $parsedUrl = $request->getParsedUrl();
 
         // If application uses component system -> component
         // If not -> null
@@ -109,8 +119,8 @@ class SystemController
 
         // Verify access to component (if application uses components)
         if ($component !== null) {
-            if ($this->verifyAccessToComponent($component) === false) {
-                $this->solveInsufficientPermissions();
+            if ($this->permissionManager->verifyAccessToComponent($component) === false) {
+                $this->solveInsufficientPermissions($parsedUrl);
             }
         }
 
@@ -147,9 +157,10 @@ class SystemController
              */
             $response = $controller->$action($request);
         } /**
-         * @noinspection PhpRedundantCatchClauseInspection Controller can really throw InsufficientPermissionsException
+         * @noinspection PhpRedundantCatchClauseInspection
          */ catch (InsufficientPermissionsException $e) {
-            $this->solveInsufficientPermissions();
+            // Controller can really throw InsufficientPermissionsException
+            $this->solveInsufficientPermissions($parsedUrl);
 
             return;
         }
@@ -167,26 +178,15 @@ class SystemController
     }
 
     /**
-     * Verifies user's acces to component (for application uses components only)
-     *
-     * @param string $component Component for verify
-     *
-     * @return bool Has user access to the component?
-     */
-    private function verifyAccessToComponent(string $component): bool
-    {
-        // TODO: implement this method
-        return true;
-    }
-
-    /**
      * Resolves insufficient permissions
      * It's called when user hasn't access to component or if controller throws
      * an exception about insufficient permissions to some action
+     *
+     * @param \Mammoth\Url\Entity\ParsedUrl $parsedUrl Actual Parsed URL for loading some things
      */
-    private function solveInsufficientPermissions(): void
+    private function solveInsufficientPermissions(ParsedUrl $parsedUrl): void
     {
-        // TODO: implement this method
+        $this->router->routeToForbidden($parsedUrl);
     }
 
     /**
@@ -264,28 +264,4 @@ class SystemController
             $response->setDataVar("antiCache", "t=".date("d-m-Y-H.m:s"));
         }
     }
-
-    /**
-     * Automaticky přihlásí uživatele
-     * V COOKIES musí být přítomen platný přihlašovací klíč
-     */
-    /*private function logInUserAutomatically(): void
-    {
-        // Ověření existence přihlašovacího klíče
-        try {
-            $loginKey = $this->cookie->getCookieByName("login-key");
-        } catch (NonExistingKeyException $e) {
-            return;
-        }
-
-        try {
-            $this->userManager->loginAutomatically($loginKey);
-        } catch (InvalidLoginKeyException $e) {
-            // Neplatný přihlašovací klíč
-            return;
-        }
-
-        // Výměna kódu kvůli bezpečnosti
-        $this->userManager->repairLoginKey();
-    }*/
 }

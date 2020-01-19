@@ -1,0 +1,20 @@
+<h1>{if $user->isLoggedIn() === true}Current user{else}Not logged in{/if}</h1>
+
+<div class="tracy-inner">
+    {* No user logged in *}
+    <div n:if="$user->isLoggedIn() === false" class="tracy-inner-container">
+        No user logged in, you're a visitor now
+    </div>
+
+    {* Someone logged in *}
+    <div n:if="$user->isLoggedIn() === true" class="tracy-inner-container">
+        <table>
+            <tbody>
+            <tr n:foreach="$userProperties as $property">
+                <th>{$property->getName()}</th>
+                <td>{$property->getContent()}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

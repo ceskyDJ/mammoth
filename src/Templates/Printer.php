@@ -68,28 +68,8 @@ class Printer implements IPrinter
             return;
         }
 
-        // Latte instance
-        $latte = new Latte\Engine;
-
-        // Latte's cache file
-        $latte->setTempDirectory($this->configurator->getTempDir());
-
-        // Add filter for translating (if translate manager implementation is loaded)
-        try {
-            $this->translateManager->translatePageText(new FilterInfo, "");
-
-            $latte->addFilter("translate", [$this->translateManager, "translatePageText"]);
-        } /**
-         * @noinspection PhpRedundantCatchClauseInspection Translate method is not part of a framework
-         */ catch (NotPartOfFrameworkException $e) {
-            // Translating isn't implement by application
-        }
-
-        // Add framework's macros
-        CustomMacros::install($latte->getCompiler(), $this->urlManager);
-
         // Template writing
-        print $latte->renderToString(
+        print $this->getFileHTML(
             $this->getDirectory($parsedUrl)."/".$response->getLayoutView().".latte",
             $response->getDataVarsForTemplate()
         );
@@ -117,5 +97,33 @@ class Printer implements IPrinter
         } else {
             return $templatesDir;
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFileHTML(string $path, array $data = []): string
+    {
+        // Latte instance
+        $latte = new Latte\Engine;
+
+        // Latte's cache file
+        $latte->setTempDirectory($this->configurator->getTempDir());
+
+        // Add filter for translating (if translate manager implementation is loaded)
+        try {
+            $this->translateManager->translatePageText(new FilterInfo, "");
+
+            $latte->addFilter("translate", [$this->translateManager, "translatePageText"]);
+        } /**
+         * @noinspection PhpRedundantCatchClauseInspection
+         */ catch (NotPartOfFrameworkException $e) {
+            // Translate method is not part of a framework but isn't implement by application, too
+        }
+
+        // Add framework's macros
+        CustomMacros::install($latte->getCompiler(), $this->urlManager);
+
+        return $latte->renderToString($path, $data);
     }
 }

@@ -12,6 +12,7 @@ use function implode;
 use function lcfirst;
 use function preg_split;
 use function str_replace;
+use function ucfirst;
 use function ucwords;
 
 /**
@@ -49,5 +50,20 @@ final class StringManipulator
         $asArray = preg_split("%(?=[A-Z])%", $text);
 
         return mb_strtolower(implode("-", $asArray));
+    }
+
+    /**
+     * Converts string with words separated by dashes (-) to human readable phrase
+     *
+     * @param string $text Input string (with dashes)
+     * @param bool $firstUpper Uppercase first letter
+     *
+     * @return string Output string (human readable) - ex. (E/e)xample text string
+     */
+    public function dashesToHumanReadable(string $text, bool $firstUpper = true): string
+    {
+        $phrase = str_replace("-", " ", $text);
+
+        return ($firstUpper === true ? ucfirst($phrase) : $phrase);
     }
 }

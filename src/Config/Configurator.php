@@ -10,21 +10,20 @@ namespace Mammoth\Config;
 
 use JanDrabek\Tracy\GitVersionPanel;
 use Mammoth\Common\DIClass;
+use Mammoth\Connect\Tracy\UserPanel;
 use Mammoth\Database\DB;
 use Mammoth\DI\DIContainer;
 use Mammoth\Exceptions\ApplicationNotUseComponentsException;
 use Mammoth\Exceptions\ConfigFileNotFoundException;
-use Mammoth\Exceptions\LoadNonInjectableClassException;
 use Mammoth\Exceptions\NoConfigFileGivenException;
-use Mammoth\Exceptions\NonExistingFileException;
 use Mammoth\Exceptions\NotSetAllDataInLocalConfigException;
 use Mammoth\Http\Factory\CookieFactory;
 use Mammoth\Http\Factory\ServerFactory;
 use Mammoth\Http\Factory\SessionFactory;
 use Mammoth\Loading\Abstraction\ILoader;
 use Nette\Bridges\DatabaseTracy\ConnectionPanel;
-use ReflectionException;
 use Tracy\Debugger;
+use Tracy\IBarPanel;
 use function array_replace_recursive;
 use function file_exists;
 use function implode;
@@ -195,27 +194,46 @@ class Configurator
      *
      * @param \Mammoth\DI\DIContainer $container DI container
      * @param string|null $developerEmail Developer's email address for sending important error information
+     * @param \Tracy\IBarPanel[] $ownPanels Panels to Tracy added by application
      *
-     * @noinspection PhpDocMissingThrowsInspection Classes entered manually
+     * @throws \Mammoth\Exceptions\LoadNonInjectableClassException
+     * @throws \ReflectionException
      */
-    public function enableTracy(DIContainer $container, ?string $developerEmail = null): void
+    public function enableTracy(DIContainer $container, ?string $developerEmail = null, array $ownPanels = []): void
     {
         Debugger::enable(Debugger::DETECT, null, $developerEmail);
 
-        Debugger::getBar()
-            ->addPanel(new GitVersionPanel());
+        // Panels from vendor
+        Debugger::getBar()->addPanel(new GitVersionPanel());
 
+        // Framework panels
         /**
          * @var $dbConnection DB
          * @noinspection PhpUnhandledExceptionInspection Class typed manually
          */
         $dbConnection = $container->getInstance(DB::class);
 
-        Debugger::getBar()
-            ->addPanel(new ConnectionPanel($dbConnection));
+        Debugger::getBar()->addPanel(new ConnectionPanel($dbConnection));
+
+        // Application panels
+        foreach ($ownPanels as $panel) {
+            if ($panel instanceof IBarPanel) {
+                Debugger::getBar()->addPanel($panel);
+            }
+        }
 
         Debugger::$logDirectory = $this->getLogDir();
         Debugger::$productionMode = !$this->isActualServerDevelopment();
+    }
+
+    /**
+     * Adds user panel to Tracy debugger bar
+     *
+     * @param \Mammoth\Connect\Tracy\UserPanel $userPanel User panel object
+     */
+    public function addUserPanelToTracy(UserPanel $userPanel): void
+    {
+        Debugger::getBar()->addPanel($userPanel);
     }
 
     /**

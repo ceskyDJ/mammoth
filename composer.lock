@@ -64,12 +64,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/latte.git",
-                "reference": "e101a3b6b040de03b941726e51d586ddba6c0eb1"
+                "reference": "3f199f3882a69e820e36cfc202d4bd864ebc0ec7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/latte/zipball/e101a3b6b040de03b941726e51d586ddba6c0eb1",
-                "reference": "e101a3b6b040de03b941726e51d586ddba6c0eb1",
+                "url": "https://api.github.com/repos/nette/latte/zipball/3f199f3882a69e820e36cfc202d4bd864ebc0ec7",
+                "reference": "3f199f3882a69e820e36cfc202d4bd864ebc0ec7",
                 "shasum": ""
             },
             "require": {
@@ -130,7 +130,7 @@
                 "template",
                 "twig"
             ],
-            "time": "2020-01-11T16:17:29+00:00"
+            "time": "2020-01-18T17:34:52+00:00"
         },
         {
             "name": "nette/caching",
@@ -1328,16 +1328,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.4",
+            "version": "0.12.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "100a25ba8561223f6bf5a5ff4204f951c0ec007c"
+                "reference": "71a20c18f06c53605251a00a8efe443fa85225d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/100a25ba8561223f6bf5a5ff4204f951c0ec007c",
-                "reference": "100a25ba8561223f6bf5a5ff4204f951c0ec007c",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/71a20c18f06c53605251a00a8efe443fa85225d1",
+                "reference": "71a20c18f06c53605251a00a8efe443fa85225d1",
                 "shasum": ""
             },
             "require": {
@@ -1363,7 +1363,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-01-06T06:38:17+00:00"
+            "time": "2020-01-12T14:31:21+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
@@ -1565,16 +1565,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "v0.6.9",
+            "version": "v0.6.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "9ae98079ff0af96031f983986ad9f47a72b211be"
+                "reference": "e12f266f549a08615bf5a5c2ee10662b269263d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/9ae98079ff0af96031f983986ad9f47a72b211be",
-                "reference": "9ae98079ff0af96031f983986ad9f47a72b211be",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/e12f266f549a08615bf5a5c2ee10662b269263d1",
+                "reference": "e12f266f549a08615bf5a5c2ee10662b269263d1",
                 "shasum": ""
             },
             "require": {
@@ -1589,7 +1589,7 @@
                 "ondram/ci-detector": "^3.1",
                 "php": "^7.2",
                 "phpstan/phpdoc-parser": "^0.4",
-                "phpstan/phpstan": "^0.12.4",
+                "phpstan/phpstan": "^0.12.5",
                 "phpstan/phpstan-phpunit": "^0.12",
                 "sebastian/diff": "^3.0",
                 "symfony/console": "^4.4|^5.0",
@@ -1627,6 +1627,7 @@
                     "Rector\\": "src",
                     "Rector\\Autodiscovery\\": "packages/Autodiscovery/src",
                     "Rector\\Architecture\\": "packages/Architecture/src",
+                    "Rector\\AttributeAwarePhpDoc\\": "packages/AttributeAwarePhpDoc/src",
                     "Rector\\BetterPhpDocParser\\": "packages/BetterPhpDocParser/src",
                     "Rector\\CakePHP\\": "packages/CakePHP/src",
                     "Rector\\Celebrity\\": "packages/Celebrity/src",
@@ -1647,6 +1648,7 @@
                     "Rector\\Nette\\": "packages/Nette/src",
                     "Rector\\NodeTypeResolver\\": "packages/NodeTypeResolver/src",
                     "Rector\\PHPStan\\": "packages/PHPStan/src",
+                    "Rector\\PHPStanStaticTypeMapper\\": "packages/PHPStanStaticTypeMapper/src",
                     "Rector\\PHPUnitSymfony\\": "packages/PHPUnitSymfony/src",
                     "Rector\\PHPUnit\\": "packages/PHPUnit/src",
                     "Rector\\PSR4\\": "packages/PSR4/src",
@@ -1679,6 +1681,7 @@
                     "Rector\\ZendToSymfony\\": "packages/ZendToSymfony/src",
                     "Rector\\Utils\\DocumentationGenerator\\": "utils/DocumentationGenerator/src",
                     "Rector\\Utils\\RectorGenerator\\": "utils/RectorGenerator/src",
+                    "Rector\\Utils\\PHPStanAttributeTypeSyncer\\": "utils/PHPStanAttributeTypeSyncer/src",
                     "Rector\\StrictCodeQuality\\": "packages/StrictCodeQuality/src",
                     "Rector\\DynamicTypeAnalysis\\": "packages/DynamicTypeAnalysis/src",
                     "Rector\\PhpDeglobalize\\": "packages/PhpDeglobalize/src",
@@ -1712,7 +1715,7 @@
                 "instant refactoring",
                 "instant upgrades"
             ],
-            "time": "2020-01-08T14:07:11+00:00"
+            "time": "2020-01-17T15:49:58+00:00"
         },
         {
             "name": "sebastian/diff",

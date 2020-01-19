@@ -23,6 +23,15 @@ interface IPrinter
      *
      * @param \Mammoth\Http\Entity\Response response Data for constructing response for client
      */
-
     public function writeContent(Response $response): void;
+
+    /**
+     * Returns content (HTML) of regular file
+     *
+     * @param string $path Absolute path to file
+     * @param array $data Array with vars for file
+     *
+     * @return string HTML of final file compiled by template engine
+     */
+    public function getFileHTML(string $path, array $data = []): string;
 }
