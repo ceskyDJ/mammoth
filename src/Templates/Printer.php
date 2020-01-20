@@ -10,9 +10,9 @@ namespace Mammoth\Templates;
 
 use Latte;
 use Latte\Runtime\FilterInfo;
-use Mammoth\Common\DIClass;
 use Mammoth\Config\Configurator;
 use Mammoth\Connect\Latte\CustomMacros;
+use Mammoth\DI\DIClass;
 use Mammoth\Exceptions\NotPartOfFrameworkException;
 use Mammoth\Http\Entity\Response;
 use Mammoth\Http\Entity\Server;

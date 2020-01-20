@@ -8,7 +8,7 @@ declare(strict_types = 1);
 
 namespace Mammoth\Logging;
 
-use Mammoth\Common\DIClass;
+use Mammoth\DI\DIClass;
 use Mammoth\Logging\Abstraction\ILogger;
 use Tracy\Debugger;
 

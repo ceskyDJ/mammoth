@@ -8,8 +8,8 @@ declare(strict_types = 1);
 
 namespace Mammoth\Url;
 
-use Mammoth\Common\DIClass;
 use Mammoth\Config\Configurator;
+use Mammoth\DI\DIClass;
 use Mammoth\Exceptions\ApplicationNotUseComponentsException;
 use Mammoth\Translating\Abstraction\ITranslateManager;
 use Mammoth\Url\Abstraction\IUrlManager;

@@ -6,7 +6,7 @@
 
 declare(strict_types = 1);
 
-namespace Mammoth\Common;
+namespace Mammoth\DI;
 
 use InvalidArgumentException;
 use Mammoth\Exceptions\NonInjectablePropertyException;
@@ -24,7 +24,7 @@ use function stristr;
  * It's used in cases when it's necessary to manually inject dependencies to class
  *
  * @author Michal ŠMAHEL (ceskyDJ) <admin@ceskydj.cz>
- * @package Mammoth\Common
+ * @package Mammoth\DI
  */
 trait DIClass
 {

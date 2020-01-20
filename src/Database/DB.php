@@ -8,7 +8,7 @@ declare(strict_types = 1);
 
 namespace Mammoth\Database;
 
-use Mammoth\Common\DIClass;
+use Mammoth\DI\DIClass;
 use Nette\Database\Connection;
 use PDO;
 use PDOException;

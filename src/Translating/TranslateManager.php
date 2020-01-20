@@ -9,8 +9,8 @@ declare(strict_types = 1);
 namespace Mammoth\Translating;
 
 use Latte\Runtime\FilterInfo;
-use Mammoth\Common\DIClass;
 use Mammoth\Config\Configurator;
+use Mammoth\DI\DIClass;
 use Mammoth\Exceptions\NotPartOfFrameworkException;
 use Mammoth\Translating\Abstraction\ITranslateManager;
 use function in_array;

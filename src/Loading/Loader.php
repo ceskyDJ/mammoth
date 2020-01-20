@@ -8,8 +8,8 @@ declare(strict_types = 1);
 
 namespace Mammoth\Loading;
 
-use Mammoth\Common\DIClass;
 use Mammoth\Config\Configurator;
+use Mammoth\DI\DIClass;
 use Mammoth\Loading\Abstraction\ILoader;
 use function ltrim;
 use function spl_autoload_register;

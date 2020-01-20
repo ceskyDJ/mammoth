@@ -8,11 +8,11 @@ declare(strict_types = 1);
 
 namespace Mammoth\Base;
 
-use Mammoth\Common\DIClass;
 use Mammoth\Config\Configurator;
 use Mammoth\Connect\Tracy\Factory\UrlPanelFactory;
 use Mammoth\Connect\Tracy\UserPanel;
 use Mammoth\Controller\Common\Controller;
+use Mammoth\DI\DIClass;
 use Mammoth\DI\DIContainer;
 use Mammoth\Exceptions\InsufficientPermissionsException;
 use Mammoth\Exceptions\InvalidLangException;

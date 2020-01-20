@@ -8,8 +8,8 @@ declare(strict_types = 1);
 
 namespace Mammoth\Controller;
 
-use Mammoth\Common\DIClass;
 use Mammoth\Controller\Common\Controller;
+use Mammoth\DI\DIClass;
 use Mammoth\Factory\ResponseFactory;
 use Mammoth\Http\Entity\Request;
 use Mammoth\Http\Entity\Response;

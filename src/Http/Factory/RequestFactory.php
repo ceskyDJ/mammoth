@@ -8,7 +8,7 @@ declare(strict_types = 1);
 
 namespace Mammoth\Factory;
 
-use Mammoth\Common\DIClass;
+use Mammoth\DI\DIClass;
 use Mammoth\Http\Entity\Request;
 use Mammoth\Http\Entity\Server;
 use Mammoth\Http\Entity\Session;

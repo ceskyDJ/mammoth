@@ -8,7 +8,7 @@ declare(strict_types = 1);
 
 namespace Mammoth\Security;
 
-use Mammoth\Common\DIClass;
+use Mammoth\DI\DIClass;
 use Mammoth\Exceptions\NotPartOfFrameworkException;
 use Mammoth\Security\Abstraction\IPermissionManager;
 use Mammoth\Security\Entity\Permission;

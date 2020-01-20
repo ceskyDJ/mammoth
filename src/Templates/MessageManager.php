@@ -8,7 +8,7 @@ declare(strict_types = 1);
 
 namespace Mammoth\Templates;
 
-use Mammoth\Common\DIClass;
+use Mammoth\DI\DIClass;
 use Mammoth\Exceptions\NonExistingKeyException;
 use Mammoth\Http\Entity\Session;
 use Mammoth\Templates\Abstraction\IMessageManager;
