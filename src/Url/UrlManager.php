@@ -26,6 +26,7 @@ use function filter_input;
 use function implode;
 use function is_array;
 use function is_dir;
+use function is_file;
 use function preg_match;
 use function str_replace;
 use function trim;
@@ -419,13 +420,21 @@ class UrlManager implements IUrlManager
             // Application use component system
             if (($component = $parsedUrl->getComponent(true)) !== null) {
                 $controllerFullQualifiedName = "{$rootNamespace}\\{$component}\\{$controllerName}";
+                $controllerPath = $this->configurator->getAppSrcRootDir()."/Controller/{$component}/{$controllerName}.php";
             } else {
                 // Application doesn't use it
                 $controllerFullQualifiedName = "{$rootNamespace}\\{$controllerName}";
+                $controllerPath = $this->configurator->getAppSrcRootDir()."/Controller/{$controllerName}.php";
             }
         } else {
             // Framework controller
             $controllerFullQualifiedName = "Mammoth\\Controller\\{$controllerName}";
+            $controllerPath = __DIR__."/../Controller/{$controllerName}.php";
+        }
+
+        // Verify that controller file is exists, so it could be required by Loader
+        if (!is_file($controllerPath)) {
+            return false;
         }
 
         // Try create instance of Reflection class
