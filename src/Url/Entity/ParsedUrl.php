@@ -27,6 +27,12 @@ final class ParsedUrl
      * Component for permit using framework controllers
      */
     public const FRAMEWORK_COMPONENT = "mammoth";
+    /**
+     * Bad value cannot be null, so this is the solution.
+     * Null is for undefined data (they aren't in URL).
+     * This constant is used when bad value is in URL
+     */
+    public const BAD_VALUE = "bad";
 
     /**
      * @var string[] Array of "clean" routes (without %, [ and ])

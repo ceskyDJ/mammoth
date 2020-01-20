@@ -158,7 +158,7 @@ class UrlManager implements IUrlManager
             $getMethod = "get".ucfirst($routeItem['name']);
 
             // Property need to repair
-            if ($parsedUrl->$getMethod() === null) {
+            if ($parsedUrl->$getMethod() === null || $parsedUrl->$getMethod() === ParsedUrl::BAD_VALUE) {
                 $repairMethod = "repair".ucfirst($routeItem['name']);
                 $setMethod = "set".ucfirst($routeItem['name']);
 
@@ -238,7 +238,13 @@ class UrlManager implements IUrlManager
             return false;
         }
 
-        return $this->translateManager->isValidLang($lang);
+        if ($this->translateManager->isValidLang($lang)) {
+            return true;
+        } else {
+            $parsedUrl->setLanguage(ParsedUrl::BAD_VALUE);
+
+            return false;
+        }
     }
 
     /**
@@ -255,6 +261,12 @@ class UrlManager implements IUrlManager
             return false;
         }
 
+        try {
+            $this->configurator->getAppDefaultComponent();
+        } catch (ApplicationNotUseComponentsException $e) {
+            return false;
+        }
+
         // Framework fictive "component" for enforcement use of framework controllers
         if ($component === ParsedUrl::FRAMEWORK_COMPONENT) {
             return true;
@@ -263,7 +275,13 @@ class UrlManager implements IUrlManager
         // Convert multi-word URL parts to the right form
         $component = $this->stringManipulator->dashesToCamelCase($component);
 
-        return is_dir($this->configurator->getAppSrcRootDir()."/Controller/".ucfirst($component));
+        if (is_dir($this->configurator->getAppSrcRootDir()."/Controller/".ucfirst($component))) {
+            return true;
+        } else {
+            $parsedUrl->setComponent(ParsedUrl::BAD_VALUE);
+
+            return false;
+        }
     }
 
     /**
@@ -278,7 +296,8 @@ class UrlManager implements IUrlManager
     private function isValidAction(?string $action, ParsedUrl $parsedUrl): bool
     {
         // If action is null or controller is not valid, it doesn't make sense to continue
-        if ($action === null || $parsedUrl->getController() === null) {
+        if ($action === null || $parsedUrl->getController() === null
+            || $parsedUrl->getController() === ParsedUrl::BAD_VALUE) {
             return false;
         }
 
@@ -314,6 +333,8 @@ class UrlManager implements IUrlManager
 
             return true;
         } catch (ReflectionException $e) {
+            $parsedUrl->setAction(ParsedUrl::BAD_VALUE);
+
             return false;
         }
     }
@@ -329,11 +350,15 @@ class UrlManager implements IUrlManager
     private function isValidData(?string $data, ParsedUrl $parsedUrl): bool
     {
         // If controller isn't valid, it doesn't make sense to continue
-        if ($parsedUrl->getController() === null) {
+        if ($parsedUrl->getController() === null || $parsedUrl->getController() === ParsedUrl::BAD_VALUE) {
             return false;
         }
 
-        return !empty($data) && !filter_input(INPUT_GET, $data);
+        if (!empty($data) && !filter_input(INPUT_GET, $data)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -359,6 +384,12 @@ class UrlManager implements IUrlManager
      */
     private function repairComponent(ParsedUrl $parsedUrl, bool $required): ?string
     {
+        // Error controller doesn't have component, so although component is "bad",
+        // it can be set to null
+        if ($parsedUrl->getController() === "error") {
+            return null;
+        }
+
         try {
             return $this->configurator->getAppDefaultComponent();
         } catch (ApplicationNotUseComponentsException $e) {
@@ -378,8 +409,8 @@ class UrlManager implements IUrlManager
     private function repairController(ParsedUrl $parsedUrl, bool $required): ?string
     {
         // If controller is required, it cannot be repaired
-        if ($required === true) {
-            return null;
+        if ($required === true || $parsedUrl->getController() === ParsedUrl::BAD_VALUE) {
+            return ParsedUrl::BAD_VALUE;
         }
 
         // Try base controller
@@ -405,6 +436,12 @@ class UrlManager implements IUrlManager
     {
         if ($controller === null) {
             return false;
+        }
+
+        // Try to use default component from repairComponent() method
+        if ($parsedUrl->getComponent() === ParsedUrl::BAD_VALUE) {
+            // Required isn't used in repairComponent() method, so given value can be anything
+            $parsedUrl->setComponent($this->repairComponent($parsedUrl, true));
         }
 
         // Convert multi-word URL parts to the right form
@@ -434,6 +471,8 @@ class UrlManager implements IUrlManager
 
         // Verify that controller file is exists, so it could be required by Loader
         if (!is_file($controllerPath)) {
+            $parsedUrl->setController(ParsedUrl::BAD_VALUE);
+
             return false;
         }
 
@@ -444,6 +483,8 @@ class UrlManager implements IUrlManager
 
             return true;
         } catch (ReflectionException $e) {
+            $parsedUrl->setController(ParsedUrl::BAD_VALUE);
+
             return false;
         }
     }

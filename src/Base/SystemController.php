@@ -121,10 +121,9 @@ class SystemController
         $this->autoChangeLanguageByUser($request);
 
         // Bad controller in URL -> route to 404
-        if ($parsedUrl->getController() === null) {
+        if ($parsedUrl->getController() === ParsedUrl::BAD_VALUE) {
             // Set error controller from config and 404 as parameter
-            $parsedUrl->setController($this->configurator->getAppErrorControllerName())
-                ->setAction("notFound");
+            $parsedUrl->setController($this->configurator->getAppErrorControllerName())->setAction("notFound");
 
             // Verify that application has implemented error controller
             try {

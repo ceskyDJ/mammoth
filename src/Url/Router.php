@@ -84,9 +84,7 @@ class Router implements IRouter
 
         // Get target address (after repairing etc.)
         $address .= "/".$this->urlManager->getResultAddress(
-                $this->urlManager->constructAddressFromParsedUrl(
-                    $newParsedUrl
-                )
+                $this->urlManager->constructAddressFromParsedUrl($newParsedUrl)
             );
 
         // Add JavaScript data
