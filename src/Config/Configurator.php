@@ -27,12 +27,16 @@ use Nette\Bridges\DatabaseTracy\ConnectionPanel;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
 use function array_replace_recursive;
+use function array_walk;
+use function bdump;
 use function file_exists;
 use function implode;
 use function is_array;
 use function is_dir;
+use function mb_strtoupper;
 use function mkdir;
 use function parse_ini_file;
+use function Rector\Php71\Tests\Rector\FuncCall\CountOnNullRector\Fixture\b;
 use function trigger_error;
 use function ucfirst;
 use const E_USER_NOTICE;
@@ -74,7 +78,7 @@ class Configurator
      * Configurator constructor
      *
      * @param string $appSrcRootDir __DIR__ of starter.php
-     * @param string[] $configFiles Absolute paths to config files
+     * @param string[] $configFiles Relative paths from starter.php to config files
      *
      * @throws \Mammoth\Exceptions\NoConfigFileGivenException No config file specified
      * @throws \Mammoth\Exceptions\ConfigFileNotFoundException Invalid configuration file address
@@ -83,10 +87,26 @@ class Configurator
     public function __construct(string $appSrcRootDir, ...$configFiles)
     {
         $this->appSrcRootDir = $appSrcRootDir;
-        $this->configFiles = $configFiles;
+        $this->configFiles = $this->convertConfigFilesToAbsolutePath($configFiles);
 
         $this->configs = $this->getConfigs();
         $this->setDirectoriesFromConfigs();
+    }
+
+    /**
+     * Converts config files to absolute paths (they are provided as relative one from application)
+     *
+     * @param array $configFiles Array of relative paths for config files
+     *
+     * @return bool Absolute paths array
+     */
+    private function convertConfigFilesToAbsolutePath(array $configFiles): array
+    {
+       foreach ($configFiles as &$configFile) {
+           $configFile = "{$this->getAppSrcRootDir()}/".ltrim($configFile, "/");
+       }
+
+        return $configFiles;
     }
 
     /**
@@ -298,7 +318,7 @@ class Configurator
      */
     public function setLogDir(string $logDir): Configurator
     {
-        $this->logDir = __DIR__."/../../{$logDir}";
+        $this->logDir = $this->getAppSrcRootDir()."/../{$logDir}";
 
         if (!is_dir($this->logDir)) {
             $this->resolveInvalidDirectoryFromConfig($this->logDir, "log");
@@ -345,7 +365,7 @@ class Configurator
      */
     public function setTempDir(string $tempDir): Configurator
     {
-        $this->tempDir = __DIR__."/../../{$tempDir}";
+        $this->tempDir = $this->getAppSrcRootDir()."/../{$tempDir}";
 
         if (!is_dir($this->tempDir)) {
             $this->resolveInvalidDirectoryFromConfig($this->tempDir, "temp");
