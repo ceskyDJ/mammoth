@@ -6,7 +6,7 @@
 
 declare(strict_types = 1);
 
-namespace Mammoth\Factory;
+namespace Mammoth\Http\Factory;
 
 use Mammoth\DI\DIClass;
 use Mammoth\Http\Entity\Cookie;
@@ -20,7 +20,7 @@ use Mammoth\Templates\MessageManager;
  * Factory for creating Response instance
  *
  * @author Michal ŠMAHEL (ceskyDJ)
- * @package Mammoth\Factory
+ * @package Mammoth\Http\Factory
  */
 class ResponseFactory
 {

@@ -10,9 +10,9 @@ namespace Mammoth\Controller;
 
 use Mammoth\Controller\Common\Controller;
 use Mammoth\DI\DIClass;
-use Mammoth\Factory\ResponseFactory;
 use Mammoth\Http\Entity\Request;
 use Mammoth\Http\Entity\Response;
+use Mammoth\Http\Factory\ResponseFactory;
 
 /**
  * Controller for home page

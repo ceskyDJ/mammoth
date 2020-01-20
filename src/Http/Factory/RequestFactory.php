@@ -6,7 +6,7 @@
 
 declare(strict_types = 1);
 
-namespace Mammoth\Factory;
+namespace Mammoth\Http\Factory;
 
 use Mammoth\DI\DIClass;
 use Mammoth\Http\Entity\Request;
@@ -18,7 +18,7 @@ use Mammoth\Url\UrlManager;
  * Factory for creating Request instances
  *
  * @author Michal ŠMAHEL (ceskyDJ)
- * @package Mammoth\Factory
+ * @package Mammoth\Http\Factory
  */
 class RequestFactory
 {
