@@ -143,4 +143,14 @@ final class Server
          */
         return "{$this->getProtocol()}://{$this->getServerVar("SERVER_NAME")}/";
     }
+
+    /**
+     * Verifies that is the request Ajax one
+     *
+     * @return bool Is it Ajax request now?
+     */
+    public function isItAjaxRequest(): bool
+    {
+        return (isset($this->serverData['HTTP_X_REQUESTED_WITH']) && $this->serverData['HTTP_X_REQUESTED_WITH'] === "xmlhttprequest");
+    }
 }

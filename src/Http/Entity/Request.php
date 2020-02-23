@@ -247,4 +247,14 @@ final class Request
 
         return $cleanUrl;
     }
+
+    /**
+     * Verifies that is the request Ajax one
+     *
+     * @return bool Is it Ajax request now?
+     */
+    public function isItAjaxRequest(): bool
+    {
+        return $this->server->isItAjaxRequest();
+    }
 }

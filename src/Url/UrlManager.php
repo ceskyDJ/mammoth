@@ -11,6 +11,7 @@ namespace Mammoth\Url;
 use Mammoth\Config\Configurator;
 use Mammoth\DI\DIClass;
 use Mammoth\Exceptions\ApplicationNotUseComponentsException;
+use Mammoth\Http\Entity\Server;
 use Mammoth\Translating\Abstraction\ITranslateManager;
 use Mammoth\Url\Abstraction\IUrlManager;
 use Mammoth\Url\Entity\ParsedUrl;
@@ -21,6 +22,8 @@ use ReflectionClass;
 use ReflectionException;
 use function array_filter;
 use function array_map;
+use function bdump;
+use function dump;
 use function explode;
 use function filter_input;
 use function implode;
@@ -63,6 +66,10 @@ class UrlManager implements IUrlManager
      * @inject
      */
     private StringManipulator $stringManipulator;
+    /**
+     * @inject
+     */
+    private Server $server;
 
     /**
      * @inheritDoc
@@ -129,6 +136,11 @@ class UrlManager implements IUrlManager
                 if ($routeItem['name'] !== "data") {
                     // Convert multi-word URL parts to the right form
                     $value = $this->stringManipulator->dashesToCamelCase($urlArray[$urlIndex]);
+
+                    // Action can has 2 variants - normal and for AJAX (with Ajax suffix)
+                    if ($routeItem['name'] === "action") {
+                        $value = ($this->server->isItAjaxRequest() === false ? $value : $value."Ajax");
+                    }
 
                     $parsedUrl->$setMethod($value);
                 } else {
@@ -299,6 +311,11 @@ class UrlManager implements IUrlManager
         if ($action === null || $parsedUrl->getController() === null
             || $parsedUrl->getController() === ParsedUrl::BAD_VALUE) {
             return false;
+        }
+
+        // If current request is AJAX one, add suffix to action name
+        if ($this->server->isItAjaxRequest() === true) {
+            $action .= "-ajax";
         }
 
         // Convert multi-word URL parts to the right form
