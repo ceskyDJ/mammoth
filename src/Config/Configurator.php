@@ -16,6 +16,7 @@ use Mammoth\Database\DB;
 use Mammoth\DI\DIClass;
 use Mammoth\DI\DIContainer;
 use Mammoth\Exceptions\ApplicationNotUseComponentsException;
+use Mammoth\Exceptions\CannotConnectToDatabaseException;
 use Mammoth\Exceptions\ConfigFileNotFoundException;
 use Mammoth\Exceptions\NoConfigFileGivenException;
 use Mammoth\Exceptions\NotSetAllDataInLocalConfigException;
@@ -24,6 +25,7 @@ use Mammoth\Http\Factory\ServerFactory;
 use Mammoth\Http\Factory\SessionFactory;
 use Mammoth\Loading\Abstraction\ILoader;
 use Nette\Bridges\DatabaseTracy\ConnectionPanel;
+use Nette\Database\ConnectionException;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
 use function array_replace_recursive;
@@ -173,10 +175,14 @@ class Configurator
         $container = new DIContainer($this);
 
         // Database
-        $dbConfig = $this->getDatabaseConfig();
-        $container->addInstance(
-            new DB($dbConfig['host'], (int)$dbConfig['port'], $dbConfig['database'], $dbConfig['user-name'], $dbConfig['user-password'])
-        );
+        try {
+            $dbConfig = $this->getDatabaseConfig();
+            $container->addInstance(
+                new DB($dbConfig['host'], (int)$dbConfig['port'], $dbConfig['database'], $dbConfig['user-name'], $dbConfig['user-password'])
+            );
+        } catch (ConnectionException $e) {
+            throw new CannotConnectToDatabaseException("System wasn't able to connect to the DB with options from your config files", 0, $e);
+        }
 
         // Factories for constructing HTTP data objects
         /**
@@ -215,16 +221,26 @@ class Configurator
     /**
      * Configures Tracy bar and paths
      *
-     * @param \Mammoth\DI\DIContainer $container DI container
      * @param string|null $developerEmail Developer's email address for sending important error information
+     * @param bool|null $debugMode Forced debug mode (the biggest level of this option)
+     */
+    public function enableTracy(?string $developerEmail = null, ?bool $debugMode = false): void
+    {
+        $productionMode = ($debugMode === true ? true : !$this->isActualServerDevelopment());
+
+        Debugger::enable($productionMode, $this->getLogDir(), $developerEmail);
+    }
+
+    /**
+     * Sets up additional settings in Tracy (bars etc.)
+     *
+     * @param \Mammoth\DI\DIContainer $container DI container
      * @param \Tracy\IBarPanel[] $ownPanels Panels to Tracy added by application
      *
      * @noinspection PhpDocMissingThrowsInspection Class names typed manually
      */
-    public function enableTracy(DIContainer $container, ?string $developerEmail = null, array $ownPanels = []): void
+    public function setupAdditionalTracySettings(DIContainer $container, array $ownPanels = []): void
     {
-        Debugger::enable(Debugger::DETECT, null, $developerEmail);
-
         // Panels from vendor
         Debugger::getBar()->addPanel(new GitVersionPanel());
 
@@ -257,9 +273,6 @@ class Configurator
                 Debugger::getBar()->addPanel($panel);
             }
         }
-
-        Debugger::$logDirectory = $this->getLogDir();
-        Debugger::$productionMode = !$this->isActualServerDevelopment();
     }
 
     /**
