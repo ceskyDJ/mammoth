@@ -37,14 +37,15 @@ class DB extends Connection
      * DB construct
      *
      * @param string $host Host's address (DB server's)
+     * @param int $port Host's port (DB server's)
      * @param string $database DB name
      * @param string $userName User with access to DB
      * @param string $userPassword User's password
      */
-    public function __construct(string $host, string $database, string $userName, string $userPassword)
+    public function __construct(string $host, int $port, string $database, string $userName, string $userPassword)
     {
         parent::__construct(
-            "mysql:host={$host};dbname={$database};charset=utf8",
+            "mysql:host={$host};port={$port};dbname={$database};charset=utf8",
             $userName,
             $userPassword,
             self::PDO_CONFIG

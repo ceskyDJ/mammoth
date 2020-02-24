@@ -29,6 +29,7 @@ use Tracy\IBarPanel;
 use function array_replace_recursive;
 use function array_walk;
 use function bdump;
+use function dump;
 use function file_exists;
 use function implode;
 use function is_array;
@@ -174,7 +175,7 @@ class Configurator
         // Database
         $dbConfig = $this->getDatabaseConfig();
         $container->addInstance(
-            new DB($dbConfig['host'], $dbConfig['database'], $dbConfig['user-name'], $dbConfig['user-password'])
+            new DB($dbConfig['host'], (int)$dbConfig['port'], $dbConfig['database'], $dbConfig['user-name'], $dbConfig['user-password'])
         );
 
         // Factories for constructing HTTP data objects
