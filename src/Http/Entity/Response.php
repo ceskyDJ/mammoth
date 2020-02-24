@@ -220,6 +220,11 @@ final class Response
         }
         $this->setDataVar("contentView", $this->getContentView().".latte");
 
+        if ($this->getLayoutView() === "") {
+            $this->setLayoutView("#layout");
+        }
+        $this->setDataVar("layoutView", $this->getLayoutView().".latte");
+
         // Messages for user
         $this->saveMessages();
 

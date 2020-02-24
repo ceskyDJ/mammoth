@@ -20,6 +20,8 @@ use Mammoth\Templates\Abstraction\IPrinter;
 use Mammoth\Translating\Abstraction\ITranslateManager;
 use Mammoth\Url\Abstraction\IUrlManager;
 use Mammoth\Url\Entity\ParsedUrl;
+use function bdump;
+use function dump;
 use function file_exists;
 
 /**
@@ -70,7 +72,7 @@ class Printer implements IPrinter
 
         // Template writing
         print $this->getFileHTML(
-            $this->getDirectory($parsedUrl)."/".$response->getLayoutView().".latte",
+            $this->getDirectory($parsedUrl)."/".$response->getContentView().".latte",
             $response->getDataVarsForTemplate()
         );
     }
