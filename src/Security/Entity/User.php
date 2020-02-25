@@ -17,7 +17,7 @@ use function array_search;
  * @author Michal Šmahel (ceskyDJ) <admin@ceskydj.cz>
  * @package Mammoth\Security\Entity
  */
-class User extends PermissionGroup
+class User extends PermissionGroup implements IUser
 {
     /**
      * @var string|null User's identification (can be any type of ID -> string as type)
@@ -216,7 +216,7 @@ class User extends PermissionGroup
      */
     public function isLoggedIn(): bool
     {
-        return ($this->getRank()->getType() !== Rank::VISITOR);
+        return ($this->getRank()->getType() !== IRank::VISITOR);
     }
 
     /**
@@ -224,7 +224,7 @@ class User extends PermissionGroup
      *
      * @return \Mammoth\Security\Entity\Rank
      */
-    public function getRank(): Rank
+    public function getRank(): IRank
     {
         /**
          * @var $rank \Mammoth\Security\Entity\Rank
@@ -232,5 +232,13 @@ class User extends PermissionGroup
         $rank = $this->getPermissionPattern();
 
         return $rank;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUserName(): string
+    {
+        return $this->getNick();
     }
 }

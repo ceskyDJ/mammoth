@@ -14,21 +14,8 @@ namespace Mammoth\Security\Entity;
  * @author Michal Šmahel (ceskyDJ) <admin@ceskydj.cz>
  * @package Mammoth\Security\Entity
  */
-class Rank extends PermissionGroup
+class Rank extends PermissionGroup implements IRank
 {
-    /**
-     * Not logged in user
-     */
-    public const VISITOR = 0;
-    /**
-     * Basic user
-     */
-    public const USER = 1;
-    /**
-     * Admin with all permissions
-     */
-    public const ADMIN = 2;
-
     /**
      * @var string Name of the rank (only for some print cases etc.)
      */

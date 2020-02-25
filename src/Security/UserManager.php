@@ -12,6 +12,8 @@ use Mammoth\DI\DIClass;
 use Mammoth\Exceptions\NonExistingKeyException;
 use Mammoth\Http\Entity\Session;
 use Mammoth\Security\Abstraction\IUserManager;
+use Mammoth\Security\Entity\IRank;
+use Mammoth\Security\Entity\IUser;
 use Mammoth\Security\Entity\Rank;
 use Mammoth\Security\Entity\User;
 
@@ -31,14 +33,14 @@ class UserManager implements IUserManager
     private Session $session;
 
     /**
-     * @var \Mammoth\Security\Entity\User|null Current user
+     * @var \Mammoth\Security\Entity\IUser|null Current user
      */
-    private ?User $user = null;
+    private ?IUser $user = null;
 
     /**
      * @inheritDoc
      */
-    public function getUser(): ?User
+    public function getUser(): ?IUser
     {
         return $this->user;
     }
@@ -57,7 +59,7 @@ class UserManager implements IUserManager
     public function logInUserAutomatically(): void
     {
         try {
-            if (($user = $this->session->getSessionItemByKey("user")) instanceof User) {
+            if (($user = $this->session->getSessionItemByKey("user")) instanceof IUser) {
                 $this->logInUserToSystem($user);
             } else {
                 $this->logInUserToSystem($this->createVisitor());
@@ -71,7 +73,7 @@ class UserManager implements IUserManager
     /**
      * @inheritDoc
      */
-    public function logInUserToSystem(User $user, bool $permanent = false): void
+    public function logInUserToSystem(IUser $user, bool $permanent = false): void
     {
         $this->user = $user;
 
@@ -83,11 +85,11 @@ class UserManager implements IUserManager
     /**
      * Creates visitor (not logged in user)
      *
-     * @return \Mammoth\Security\Entity\User Visitor
+     * @return \Mammoth\Security\Entity\IUser Visitor
      */
-    private function createVisitor(): User
+    private function createVisitor(): IUser
     {
-        return new User(null, "Visitor", new Rank("Visitor", Rank::VISITOR));
+        return new User(null, "Visitor", new Rank("Visitor", IRank::VISITOR));
     }
 
     /**

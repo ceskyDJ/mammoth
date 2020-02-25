@@ -9,7 +9,7 @@ declare(strict_types = 1);
 namespace Mammoth\Connect\Tracy;
 
 use Mammoth\Security\Abstraction\IUserManager;
-use Mammoth\Security\Entity\Rank;
+use Mammoth\Security\Entity\IRank;
 use Mammoth\Security\Entity\UserData;
 use Mammoth\Templates\Abstraction\IPrinter;
 use Mammoth\Utils\StringManipulator;
@@ -68,10 +68,13 @@ class UserPanel implements IBarPanel
             $userProperties = [];
         }
 
+        // Rank type word
+        $rankTypeWord = ($this->getRankTypeAsWord($rank) ?? "");
+
         $userProperties = [
             ...$userProperties,
             new UserData("nick", $user->getNick()),
-            new UserData("rank", "{$rank->getName()} ({$this->getRankTypeAsWord($rank)})"),
+            new UserData("rank", "{$rank->getName()} ({$rankTypeWord})"),
             ...$user->getProperties(),
         ];
 
@@ -93,12 +96,12 @@ class UserPanel implements IBarPanel
     /**
      * Returns rank type name
      *
-     * @param \Mammoth\Security\Entity\Rank $rank Rank object
+     * @param \Mammoth\Security\Entity\IRank $rank Rank object
      *
-     * @return string Rank type constant name
+     * @return string|null Rank type constant name
      * @noinspection PhpDocMissingThrowsInspection User cannot be without rank
      */
-    private function getRankTypeAsWord(Rank $rank): string
+    private function getRankTypeAsWord(IRank $rank): ?string
     {
         /**
          * @noinspection PhpUnhandledExceptionInspection User cannot be without rank
@@ -106,13 +109,12 @@ class UserPanel implements IBarPanel
         $rankReflection = new ReflectionClass($rank);
         $rankConstants = $rankReflection->getConstants();
 
-        $rankType = "";
         foreach ($rankConstants as $name => $value) {
             if ($value === $rank->getType()) {
                 return mb_strtolower($name);
             }
         }
 
-        return "";
+        return null;
     }
 }
