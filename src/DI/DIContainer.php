@@ -13,6 +13,7 @@ use Mammoth\Exceptions\LoadNonInjectableClassException;
 use Mammoth\Reflection\SmartReflectionClass;
 use Mammoth\Utils\ArrayHelper;
 use Mammoth\Utils\FileHelper;
+use ReflectionClass;
 use ReflectionException;
 use ReflectionObject;
 use ReflectionProperty;
@@ -153,6 +154,11 @@ class DIContainer
         $reflection = new ReflectionObject($instance);
         $properties = $reflection->getProperties();
 
+        // Get properties of parent classes
+        if (($parentReflection = $reflection->getParentClass()) !== false) {
+            $properties = [...$properties, ...$this->getParentClassProperties($parentReflection)];
+        }
+
         // Parameter iteration and dependency injection
         /**
          * @var $property ReflectionProperty Class property
@@ -163,13 +169,7 @@ class DIContainer
                 continue;
             }
 
-            if ($property->getType() !== null) {
-                $fullClassName = $this->getPropertyTypeAsFullClassName($property);
-            } else {
-                // Old way
-                // PHP 7.4 adds property static types, use them
-                $fullClassName = $this->getPropertyTypeFromDocComment($property, $instance);
-            }
+            $fullClassName = $this->getPropertyTypeAsFullClassName($property);
 
             // Instance injection into parameter
             $propertyInstance = $this->getInstance($fullClassName);
@@ -202,41 +202,20 @@ class DIContainer
     }
 
     /**
-     * Returns property's type (as class) from its doc comment
+     * Returns properties of all parent classes
      *
-     * @param \ReflectionProperty $property Property reflection instance
-     * @param object $instance Instance of class that need to find dependencies
+     * @param \ReflectionClass $class Start class (child) covered by reflection
      *
-     * @return string Property's type as full qualified class name
-     * @throws \ReflectionException Invalid class
+     * @return ReflectionProperty[] All properties of all iterated classes
      */
-    private function getPropertyTypeFromDocComment(ReflectionProperty $property, object $instance): string
+    private function getParentClassProperties(ReflectionClass $class): array
     {
-        // Extract class name from doc comment
-        $matches = [];
-        preg_match("%@var ([a-zA-Z0-9\\\_]+)%", $property->getDocComment(), $matches);
+        $properties = $class->getProperties();
 
-        [, $className] = $matches;
-
-        // Get full qualified class name
-        if (strstr($className, "\\")) {
-            // Class name is full qualified type -> everything is OK
-            return $className;
-        } else {
-            // It's the short one, so it's to transform to full qualified one
-            // Find full qualified class name (with namespaces)
-            $reflectionClass = new SmartReflectionClass($instance, $this->fileHelper, $this->arrayHelper);
-
-            try {
-                $reflectionUse = $reflectionClass->getUseForClass($className);
-
-                return $reflectionUse->getFullClassName();
-            } catch (ReflectionException $e) {
-                // Dependency class is in the same namespaces like actual instance's class
-                // (=> there isn't any import (use) in the file for required dependency)
-                // Namespaces are inherited from actual instance
-                return $reflectionClass->getNamespaceName()."\\$className";
-            }
+        if (($parentClass = $class->getParentClass()) !== false) {
+            $properties = [...$properties, $this->getParentClassProperties($parentClass)];
         }
+
+        return $properties;
     }
 }
