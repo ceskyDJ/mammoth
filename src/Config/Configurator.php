@@ -8,7 +8,11 @@ declare(strict_types = 1);
 
 namespace Mammoth\Config;
 
+use Doctrine\DBAL;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM;
 use JanDrabek\Tracy\GitVersionPanel;
+use MacFJA\Tracy\DoctrineSql;
 use Mammoth\Connect\Tracy\Factory\UrlPanelFactory;
 use Mammoth\Connect\Tracy\UrlPanel;
 use Mammoth\Connect\Tracy\UserPanel;
@@ -26,20 +30,17 @@ use Mammoth\Http\Factory\SessionFactory;
 use Mammoth\Loading\Abstraction\ILoader;
 use Nette\Bridges\DatabaseTracy\ConnectionPanel;
 use Nette\Database\ConnectionException;
+use Symfony\Component\ErrorHandler\Debug;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
 use function array_replace_recursive;
-use function array_walk;
 use function bdump;
-use function dump;
 use function file_exists;
 use function implode;
 use function is_array;
 use function is_dir;
-use function mb_strtoupper;
 use function mkdir;
 use function parse_ini_file;
-use function Rector\Php71\Tests\Rector\FuncCall\CountOnNullRector\Fixture\b;
 use function trigger_error;
 use function ucfirst;
 use const E_USER_NOTICE;
@@ -177,10 +178,31 @@ class Configurator
         // Database
         try {
             $dbConfig = $this->getDatabaseConfig();
+
+            // Classic DB wrapper
             $container->addInstance(
                 new DB($dbConfig['host'], (int)$dbConfig['port'], $dbConfig['database'], $dbConfig['user-name'], $dbConfig['user-password'])
             );
-        } catch (ConnectionException $e) {
+
+            // Doctrine
+            if ($this->isDoctrineEnabled() === true) {
+                $doctrineConnection = DBAL\DriverManager::getConnection([
+                    'dbname' => $dbConfig['database'],
+                    'user' => $dbConfig['user-name'],
+                    'password' => $dbConfig['user-password'],
+                    'host' => $dbConfig['host'].":".$dbConfig['port'],
+                    'driver' => 'pdo_mysql'
+                ]);
+                $doctrineConfig = ORM\Tools\Setup::createAnnotationMetadataConfiguration(
+                    [$this->getAppSrcRootDir()],
+                    $this->isActualServerDevelopment(),
+                    null,
+                    null,
+                    false
+                );
+                $container->addInstance(EntityManager::create($doctrineConnection, $doctrineConfig));
+            }
+        } catch (ConnectionException|DBAL\DBALException|ORM\ORMException $e) {
             throw new CannotConnectToDatabaseException("System wasn't able to connect to the DB with options from your config files", 0, $e);
         }
 
@@ -251,6 +273,15 @@ class Configurator
          */
         $dbConnection = $container->getInstance(DB::class);
         Debugger::getBar()->addPanel(new ConnectionPanel($dbConnection), "db");
+
+        if ($this->isDoctrineEnabled() === true) {
+            /**
+             * @var $entityManager \Doctrine\ORM\EntityManager
+             * @noinspection PhpUnhandledExceptionInspection Class typed manually
+             */
+            $entityManager = $container->getInstance(EntityManager::class);
+            DoctrineSql::init($entityManager);
+        }
 
         /**
          * @var $urlPanelFactory UrlPanelFactory
@@ -520,6 +551,26 @@ class Configurator
         return $this->configs['routing']['login-page'];
     }
 
+    /**
+     * Verifies whether Doctrine is enabled in config files
+     *
+     * @return bool Is Doctrine enabled?
+     */
+    public function isDoctrineEnabled(): bool
+    {
+        return $this->configs['database']['use-doctrine'];
+    }
+
+    /**
+     * Checks whether PHP has been activated by cli
+     *
+     * @return bool Is PHP running in cli?
+     */
+    public function isCli(): bool
+    {
+        return (empty($_SERVER['REMOTE_ADDR']) and !isset($_SERVER['HTTP_USER_AGENT']) and count($_SERVER['argv']) > 0);
+    }
+    
     /**
      * Resolves invalid directory loaded from config
      *

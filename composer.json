@@ -17,7 +17,10 @@
         "jandrabek/tracy-gitversion-panel": "^2.0",
         "latte/latte": "^3.0@dev",
         "ext-pdo": "*",
-        "nette/database": "^3.0"
+        "nette/database": "^3.0",
+        "doctrine/orm": "^2.7",
+        "symfony/yaml": "^5.0",
+        "macfja/tracy-doctrine-sql": "dev-master"
     },
     "require-dev": {
         "rector/rector": "^0.6.2"
