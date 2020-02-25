@@ -64,12 +64,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/latte.git",
-                "reference": "944532710b3ae0ce0d4c52af0116b0065e22e594"
+                "reference": "53960f1255f9bde1f6ade43bf6b411eeda5348c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/latte/zipball/944532710b3ae0ce0d4c52af0116b0065e22e594",
-                "reference": "944532710b3ae0ce0d4c52af0116b0065e22e594",
+                "url": "https://api.github.com/repos/nette/latte/zipball/53960f1255f9bde1f6ade43bf6b411eeda5348c3",
+                "reference": "53960f1255f9bde1f6ade43bf6b411eeda5348c3",
                 "shasum": ""
             },
             "require": {
@@ -132,7 +132,7 @@
                 "template",
                 "twig"
             ],
-            "time": "2020-02-23T15:33:01+00:00"
+            "time": "2020-02-25T11:36:22+00:00"
         },
         {
             "name": "nette/caching",
