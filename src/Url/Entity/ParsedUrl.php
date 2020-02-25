@@ -10,6 +10,7 @@ namespace Mammoth\Url\Entity;
 
 use Mammoth\Exceptions\NotCamelCaseSyntaxException;
 use function is_array;
+use function is_numeric;
 use function preg_match;
 use function str_replace;
 use function ucfirst;
@@ -267,7 +268,7 @@ final class ParsedUrl
     {
         if ($data !== null) {
             foreach ($data as $item) {
-                if ($this->validCamelCase($item) === false) {
+                if (!is_numeric($item) && $this->validCamelCase($item) === false) {
                     throw new NotCamelCaseSyntaxException("All data parts have to use camel case");
                 }
             }
