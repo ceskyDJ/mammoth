@@ -125,17 +125,6 @@ class Router implements IRouter
     {
         $loginPageAddress = $this->configurator->getLoginPageAddress();
 
-        try {
-            $loginPageAddress = str_replace(
-                "%default-component%",
-                $this->configurator->getAppDefaultComponent(),
-                $loginPageAddress
-            );
-        } catch (ApplicationNotUseComponentsException $e) {
-            // System doesn't use components
-            $loginPageAddress = str_replace("%default-component%", "", $loginPageAddress);
-        }
-
         $newParsedUrl = $this->urlManager->parseUrl($loginPageAddress)
             ->setLanguage($parsedUrl->getLanguage());
 
