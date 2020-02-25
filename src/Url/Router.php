@@ -121,6 +121,30 @@ class Router implements IRouter
     /**
      * @inheritDoc
      */
+    public function routeToLoginPage(ParsedUrl $parsedUrl): void
+    {
+        $loginPageAddress = $this->configurator->getLoginPageAddress();
+
+        try {
+            $loginPageAddress = str_replace(
+                "%default-component%",
+                $this->configurator->getAppDefaultComponent(),
+                $loginPageAddress
+            );
+        } catch (ApplicationNotUseComponentsException $e) {
+            // System doesn't use components
+            $loginPageAddress = str_replace("%default-component%", "", $loginPageAddress);
+        }
+
+        $newParsedUrl = $this->urlManager->parseUrl($loginPageAddress)
+            ->setLanguage($parsedUrl->getLanguage());
+
+        $this->route($newParsedUrl);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function routeToForbidden(ParsedUrl $parsedUrl): void
     {
         try {

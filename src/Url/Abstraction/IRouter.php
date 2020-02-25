@@ -50,6 +50,14 @@ interface IRouter
     public function routeToSystemError(ParsedUrl $parsedUrl): void;
 
     /**
+     * Redirects to login page
+     * It loads login page from config files, so you can change it there
+     *
+     * @param \Mammoth\Url\Entity\ParsedUrl $parsedUrl ParsedURL (for getting lang)
+     */
+    public function routeToLoginPage(ParsedUrl $parsedUrl): void;
+
+    /**
      * Changes application language (redirect to URL with the new language)
      *
      * @param \Mammoth\Url\Entity\ParsedUrl $oldParsedUrl Parsed URL (old)

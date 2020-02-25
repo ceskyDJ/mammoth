@@ -511,6 +511,16 @@ class Configurator
     }
 
     /**
+     * Returns login page address
+     *
+     * @return string Login page address
+     */
+    public function getLoginPageAddress(): string
+    {
+        return $this->configs['routing']['login-page'];
+    }
+
+    /**
      * Resolves invalid directory loaded from config
      *
      * @param string $dir Loaded directory full path

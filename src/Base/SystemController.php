@@ -181,7 +181,11 @@ class SystemController
      */
     private function solveInsufficientPermissions(ParsedUrl $parsedUrl): void
     {
-        $this->router->routeToForbidden($parsedUrl);
+        if (($user = $this->userManager->getUser()) !== null && $user->isLoggedIn()) {
+            $this->router->routeToForbidden($parsedUrl);
+        } else {
+            $this->router->routeToLoginPage($parsedUrl);
+        }
     }
 
     /**
