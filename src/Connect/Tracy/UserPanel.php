@@ -43,7 +43,7 @@ class UserPanel implements IBarPanel
     public function getTab()
     {
         $data = [
-            'user' => ($this->userManager->isAnyoneLoggedIn() ? $this->userManager->getUser()->getNick() : ""),
+            'user' => ($this->userManager->isAnyoneLoggedIn() ? $this->userManager->getUser()->getUserName() : ""),
         ];
 
         return $this->printer->getFileHTML(__DIR__."/templates/user-panel-tab.latte", $data);
@@ -73,7 +73,7 @@ class UserPanel implements IBarPanel
 
         $userProperties = [
             ...$userProperties,
-            new UserData("nick", $user->getNick()),
+            new UserData("nick", $user->getUserName()),
             new UserData("rank", "{$rank->getName()} ({$rankTypeWord})"),
             ...$user->getProperties(),
         ];
