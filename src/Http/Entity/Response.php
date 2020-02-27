@@ -220,7 +220,8 @@ final class Response
             ->setDataVar("server", $this->server);
 
         // Views for loading
-        if ($this->getContentView() === "") {
+        if ($this->getContentView() === "" && $this->request->isItAjaxRequest() === false) {
+            // In case of AJAX request, sometimes content view isn't required
             throw new NoContentViewSetException("You haven't set any content view in controller");
         }
         $this->setDataVar("contentView", $this->getContentView().".latte");

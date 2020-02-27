@@ -151,6 +151,6 @@ final class Server
      */
     public function isItAjaxRequest(): bool
     {
-        return (isset($this->serverData['HTTP_X_REQUESTED_WITH']) && $this->serverData['HTTP_X_REQUESTED_WITH'] === "xmlhttprequest");
+        return (isset($this->serverData['HTTP_X_REQUESTED_WITH']) && strtolower($this->serverData['HTTP_X_REQUESTED_WITH']) === "xmlhttprequest");
     }
 }
