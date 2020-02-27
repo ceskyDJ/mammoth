@@ -35,7 +35,7 @@ class UserManager implements IUserManager
     /**
      * @var \Mammoth\Security\Entity\IUser|null Current user
      */
-    private ?IUser $user = null;
+    protected ?IUser $user = null;
 
     /**
      * @inheritDoc
@@ -58,16 +58,8 @@ class UserManager implements IUserManager
      */
     public function logInUserAutomatically(): void
     {
-        try {
-            if (($user = $this->session->getSessionItemByKey("user")) instanceof IUser) {
-                $this->logInUserToSystem($user);
-            } else {
-                $this->logInUserToSystem($this->createVisitor());
-            }
-        } catch (NonExistingKeyException $e) {
-            // No user logged in permanently, so there is no way to auto login user
-            $this->logInUserToSystem($this->createVisitor());
-        }
+        // Mammoth can't log user automatically at this time, so you must do it yourself
+        $this->logInUserToSystem($this->createVisitor());
     }
 
     /**
@@ -87,7 +79,7 @@ class UserManager implements IUserManager
      *
      * @return \Mammoth\Security\Entity\IUser Visitor
      */
-    private function createVisitor(): IUser
+    protected function createVisitor(): IUser
     {
         return new User(null, "Visitor", new Rank("Visitor", IRank::VISITOR));
     }
@@ -98,5 +90,7 @@ class UserManager implements IUserManager
     public function logOutUserFromSystem(): void
     {
         $this->logInUserToSystem($this->createVisitor());
+
+        $this->session->deleteSessionItem("user");
     }
 }
