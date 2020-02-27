@@ -10,6 +10,7 @@ namespace Mammoth\Http\Entity;
 
 use Mammoth\Exceptions\NoContentViewSetException;
 use Mammoth\Exceptions\NonExistingContentTypeException;
+use Mammoth\Security\Abstraction\IUserManager;
 use Mammoth\Templates\Abstraction\IMessageManager;
 use Mammoth\Templates\MessageManager;
 use function array_merge;
@@ -46,6 +47,7 @@ final class Response
     private Request $request;
 
     private IMessageManager $messageManager;
+    private IUserManager $userManager;
     private Session $session;
     private Cookie $cookie;
     private Server $server;
@@ -54,20 +56,23 @@ final class Response
      * Response constructor
      *
      * @param \Mammoth\Http\Entity\Request $request
-     * @param \Mammoth\Templates\MessageManager $messageManager
+     * @param \Mammoth\Templates\Abstraction\IMessageManager $messageManager
+     * @param \Mammoth\Security\Abstraction\IUserManager $userManager
      * @param \Mammoth\Http\Entity\Session $session
      * @param \Mammoth\Http\Entity\Cookie $cookie
      * @param \Mammoth\Http\Entity\Server $server
      */
     public function __construct(
         Request $request,
-        MessageManager $messageManager,
+        IMessageManager $messageManager,
+        IUserManager $userManager,
         Session $session,
         Cookie $cookie,
         Server $server
     ) {
         $this->request = $request;
         $this->messageManager = $messageManager;
+        $this->userManager = $userManager;
         $this->session = $session;
         $this->cookie = $cookie;
         $this->server = $server;
@@ -227,6 +232,11 @@ final class Response
 
         // Messages for user
         $this->saveMessages();
+
+        // User entity, if someone is logged in
+        if ($this->userManager->isAnyoneLoggedIn()) {
+            $this->setDataVar("user", $this->userManager->getUser());
+        }
 
         // When there's somewhere null instead of array, array_merge returns null as result
         // there is a little fix (if there is null value, replace it with empty array):

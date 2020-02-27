@@ -14,7 +14,8 @@ use Mammoth\Http\Entity\Request;
 use Mammoth\Http\Entity\Response;
 use Mammoth\Http\Entity\Server;
 use Mammoth\Http\Entity\Session;
-use Mammoth\Templates\MessageManager;
+use Mammoth\Security\Abstraction\IUserManager;
+use Mammoth\Templates\Abstraction\IMessageManager;
 
 /**
  * Factory for creating Response instance
@@ -29,7 +30,11 @@ class ResponseFactory
     /**
      * @inject
      */
-    private MessageManager $messageManager;
+    private IMessageManager $messageManager;
+    /**
+     * @inject
+     */
+    private IUserManager $userManager;
     /**
      * @inject
      */
@@ -53,7 +58,7 @@ class ResponseFactory
     public function create(Request $request): Response
     {
         return new Response(
-            $request, $this->messageManager, $this->session, $this->cookie, $this->server
+            $request, $this->messageManager, $this->userManager, $this->session, $this->cookie, $this->server
         );
     }
 }
