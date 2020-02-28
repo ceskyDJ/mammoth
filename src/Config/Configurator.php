@@ -570,6 +570,16 @@ class Configurator
     {
         return (empty($_SERVER['REMOTE_ADDR']) and !isset($_SERVER['HTTP_USER_AGENT']) and count($_SERVER['argv']) > 0);
     }
+
+    /**
+     * Returns mail configurations
+     *
+     * @return array Mail configurations
+     */
+    public function getMailConfig(): array
+    {
+        return $this->configs['mail'];
+    }
     
     /**
      * Resolves invalid directory loaded from config
