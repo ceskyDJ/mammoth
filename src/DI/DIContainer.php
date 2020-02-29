@@ -137,6 +137,11 @@ class DIContainer
             $instance->inject($this);
         }
 
+        // If there has been typed interface as requested class data type, add implementation class record, too
+        if (interface_exists($originalClassWithNamespace)) {
+            $this->loadedInstances[$classWithNamespace] = $instance;
+        }
+
         return $this->loadedInstances[$originalClassWithNamespace] = $instance;
     }
 
