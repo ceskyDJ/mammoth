@@ -8,14 +8,12 @@ declare(strict_types = 1);
 
 namespace Mammoth\Mailing;
 
-use Mammoth\Exceptions\MailerException;
 use Mammoth\Config\Configurator;
 use Mammoth\DI\DIClass;
-use Mammoth\Http\Entity\Server;
 use Mammoth\Mailing\Abstraction\IMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\PHPMailer;
-use function count;
+use Nette\Mail\Message;
+use Nette\Mail\SmtpMailer;
+use function file_get_contents;
 use function strip_tags;
 
 /**
@@ -31,24 +29,7 @@ class Mailer implements IMailer
     /**
      * @inject
      */
-    private Configurator $configurator;
-    /**
-     * @inject
-     */
-    private Server $server;
-
-    /**
-     * @var \PHPMailer\PHPMailer\PHPMailer PHPMailer's instance
-     */
-    private PHPMailer $phpMailer;
-
-    /**
-     * Mailer constructor
-     */
-    public function __construct()
-    {
-        $this->phpMailer = new PHPMailer(true);
-    }
+    private SmtpMailer $mailer;
 
     /**
      * @inheritDoc
@@ -64,68 +45,41 @@ class Mailer implements IMailer
         string $htmlMessage,
         string $textMessage = "",
         array $attachments = []
-    ): void {
-        $config = $this->configurator->getMailConfig();
+    ): void
+    {
+        $message = new Message;
 
-        try {
-            // Server config
-            // For testing: $this->phpMailer->SMTPDebug = 4;
-            $this->phpMailer->SMTPDebug = 0;
-            $this->phpMailer->isSMTP();
-            $this->phpMailer->Host = $config['host'];
-            $this->phpMailer->SMTPAuth = true;
-            $this->phpMailer->Username = $config['username'];
-            $this->phpMailer->Password = $config['password'];
-            $this->phpMailer->SMTPSecure = $config['secure-type'];
-            $this->phpMailer->Port = $config['port'];
-            $this->phpMailer->SMTPSecure = true;
-            $this->phpMailer->SMTPAutoTLS = true;
-            $this->phpMailer->SMTPOptions = [
-                'ssl' => [
-                    'verify_peer'       => false,
-                    'verify_peer_name'  => false,
-                    'allow_self_signed' => true,
-                ],
-            ];
+        // Sender
+        $message->setFrom($senderAddress, $senderName);
+        $message->addReplyTo($senderAddress, $senderName);
 
-            // Message config
-            $this->phpMailer->CharSet = "UTF-8";
-
-            // Recipients
-            $this->phpMailer->setFrom($senderAddress, $senderName);
-            foreach ($recipients as $recipient) {
-                if (isset($recipient['name'])) {
-                    $this->phpMailer->addAddress($recipient['address'], $recipient['name']);
-                } else {
-                    $this->phpMailer->addAddress($recipient['address']);
-                }
-            }
-            $this->phpMailer->addReplyTo($senderAddress, $senderName);
-
-            // Attachments
-            if (count($attachments) > 0) {
-                foreach ($attachments as $attachment) {
-                    if (isset($attachment['name'])) {
-                        $this->phpMailer->addAttachment($attachment['path'], $attachment['name']);
-                    } else {
-                        $this->phpMailer->addAttachment($attachment['path']);
-                    }
-                }
-            }
-
-            // Content
-            $this->phpMailer->isHTML(true);
-            $this->phpMailer->Subject = $subject;
-            $this->phpMailer->Body = $htmlMessage;
-            if ($textMessage != "") {
-                $this->phpMailer->AltBody = $textMessage;
+        // Recipients
+        foreach ($recipients as $recipient) {
+            if (isset($recipient['name'])) {
+                $message->addTo($recipient['address'], $recipient['name']);
             } else {
-                $this->phpMailer->AltBody = strip_tags($htmlMessage);
+                $message->addTo($recipient['address']);
             }
-
-            $this->phpMailer->send();
-        } catch (Exception $e) {
-            throw new MailerException("Sending email has ended with error: ".$this->phpMailer->ErrorInfo);
         }
+
+        // Attachments
+        foreach ($attachments as $attachment) {
+            if (isset($attachment['name'])) {
+                $message->addAttachment($attachment['name'], file_get_contents($attachment['path']));
+            } else {
+                $message->addAttachment($attachment['path']);
+            }
+        }
+
+        // Content
+        $message->setSubject($subject);
+        $message->setHtmlBody($htmlMessage);
+        if ($textMessage === "") {
+            strip_tags($htmlMessage);
+        }
+        $message->setBody($textMessage);
+
+        // Send
+        $this->mailer->send($message);
     }
 }

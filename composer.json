@@ -21,7 +21,7 @@
         "doctrine/orm": "^2.7",
         "symfony/yaml": "^5.0",
         "macfja/tracy-doctrine-sql": "dev-master",
-        "phpmailer/phpmailer": "^6.1"
+        "nette/mail": "^3.1"
     },
     "require-dev": {
         "rector/rector": "^0.6.2"

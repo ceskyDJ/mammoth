@@ -9,8 +9,8 @@ declare(strict_types = 1);
 namespace Mammoth\Config;
 
 use Doctrine\DBAL;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM;
+use Doctrine\ORM\EntityManager;
 use JanDrabek\Tracy\GitVersionPanel;
 use MacFJA\Tracy\DoctrineSql;
 use Mammoth\Connect\Tracy\Factory\UrlPanelFactory;
@@ -30,11 +30,10 @@ use Mammoth\Http\Factory\SessionFactory;
 use Mammoth\Loading\Abstraction\ILoader;
 use Nette\Bridges\DatabaseTracy\ConnectionPanel;
 use Nette\Database\ConnectionException;
-use Symfony\Component\ErrorHandler\Debug;
+use Nette\Mail\SmtpMailer;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
 use function array_replace_recursive;
-use function bdump;
 use function file_exists;
 use function implode;
 use function is_array;
@@ -203,8 +202,23 @@ class Configurator
                 $container->addInstance(EntityManager::create($doctrineConnection, $doctrineConfig));
             }
         } catch (ConnectionException|DBAL\DBALException|ORM\ORMException $e) {
-            throw new CannotConnectToDatabaseException("System wasn't able to connect to the DB with options from your config files", 0, $e);
+            throw new CannotConnectToDatabaseException(
+                "System wasn't able to connect to the DB with options from your config files", 0, $e
+            );
         }
+
+        // Mail
+        $mailConfig = $this->getMailConfig();
+        $mailer = new SmtpMailer(
+            [
+                'host' => $mailConfig['host'],
+                'username' => $mailConfig['username'],
+                'password' => $mailConfig['password'],
+                'secure' => $mailConfig['secure-type'],
+                'port' => $mailConfig['port'],
+            ]
+        );
+        $container->addInstance($mailer);
 
         // Factories for constructing HTTP data objects
         /**
