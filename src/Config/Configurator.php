@@ -189,7 +189,8 @@ class Configurator
                     'dbname' => $dbConfig['database'],
                     'user' => $dbConfig['user-name'],
                     'password' => $dbConfig['user-password'],
-                    'host' => $dbConfig['host'].":".$dbConfig['port'],
+                    'host' => $dbConfig['host'],
+                    'port' => $dbConfig['port'],
                     'driver' => "pdo_mysql",
                     'charset' => "utf8"
                 ]);
