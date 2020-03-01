@@ -190,7 +190,8 @@ class Configurator
                     'user' => $dbConfig['user-name'],
                     'password' => $dbConfig['user-password'],
                     'host' => $dbConfig['host'].":".$dbConfig['port'],
-                    'driver' => 'pdo_mysql'
+                    'driver' => "pdo_mysql",
+                    'charset' => "utf8"
                 ]);
                 $doctrineConfig = ORM\Tools\Setup::createAnnotationMetadataConfiguration(
                     [$this->getAppSrcRootDir()],
