@@ -20,4 +20,14 @@ interface ILoader
      * Starts loading of application classes
      */
     public function startClassAutoLoading(): void;
+
+    /**
+     * Adds new namespace for auto-loading
+     *
+     * @param string $namespaceRoot Root (vendor) namespace part - it's always the first one (for ex. App)
+     * @param string $pathRoot Root directory - all classes are in this directory
+     *
+     * @return \Mammoth\Loading\Abstraction\ILoader
+     */
+    public function addNamespace(string $namespaceRoot, string $pathRoot): ILoader;
 }

@@ -1,17 +1,21 @@
 <?php
 
+/**
+ * This is the part of the Mammoth framework (https://github.com/ceskyDJ/mammoth)
+ */
+
 declare(strict_types = 1);
 
 namespace Mammoth\Exceptions;
 
+use RuntimeException;
+
 /**
- * Class LoadingForeignClassException
+ * Exception for try to autoload foreign class (class from not recognized root namespace)
  *
  * @author Michal Šmahel (ceskyDJ) <admin@ceskydj.cz>
- * @copyright (C) 2018-Současnost, Michal ŠMAHEL, Petr Zilvar
  * @package Mammoth\Exceptions
  */
-class LoadingForeignClassException
+class LoadingForeignClassException extends RuntimeException
 {
-
 }
