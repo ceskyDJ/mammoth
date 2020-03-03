@@ -197,7 +197,7 @@ class Configurator
                 $doctrineConfig = ORM\Tools\Setup::createAnnotationMetadataConfiguration(
                     [$this->getAppSrcRootDir()],
                     $this->isActualServerDevelopment(),
-                    null,
+                    $this->getTempDir(),
                     null,
                     false
                 );
